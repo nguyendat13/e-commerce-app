@@ -11,6 +11,25 @@ let API_URL = "http://10.196.85.41:8080/api";
 async function getToken() {
     return await AsyncStorage.getItem('jwt-token');
 }
+// Gọi AI suggestion
+export const getAiSuggestion = async (prompt: string) => {
+  try {
+    const token = getToken();
+    const response = await axios.post(
+      `${API_URL}/api/ai/suggest`,
+      { prompt },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // gửi token cho backend
+        },
+      }
+    );
+    return response.data;
+  } catch (err: any) {
+    console.error("AI API error:", err);
+    throw err;
+  }
+};
 const overlayKey = (cartId: string | number) => `cart-qty-overlay:${cartId}`;
 
 export async function callApi(endpoint: string, method: string, data: any = null): Promise<AxiosResponse<any>> {
@@ -174,6 +193,7 @@ export async function POST_LOGIN(email: string, password: string): Promise<strin
 export  async function handleLogout(navigation: any): Promise<void> {
   try {
     await AsyncStorage.multiRemove(['jwt-token', 'user-email', 'cart-id']);
+    location.href = '/'; // Redirect to home or login screen
     console.log("✅ Đã đăng xuất và xóa dữ liệu người dùng.");
 
   } catch (error) {
@@ -181,7 +201,7 @@ export  async function handleLogout(navigation: any): Promise<void> {
   }
 }
 
-export function GET_PRODUCTS_BY_CATEGORY(categoryId: number, page = 0, size = 10): Promise<AxiosResponse<any>> {
+export function GET_PRODUCTS_BY_CATEGORY(categoryId: number, page = 0, size = 5): Promise<AxiosResponse<any>> {
   const url = `public/categories/${categoryId}/products?pageNumber=${page}&pageSize=${size}&sortBy=productId&sortOrder=asc`;
   return callApi(url, "GET");
 }

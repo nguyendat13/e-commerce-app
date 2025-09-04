@@ -22,6 +22,20 @@ const Home = () => {
   });
   const [products, setProducts] = useState<any[]>([]);
   const navigation = useNavigation<any>();
+const [latestProducts, setLatestProducts] = useState<any[]>([]);
+
+useEffect(() => {
+  const fetchLatestProducts = async () => {
+    try {
+      const res = await GET_ALL_PAGE('products', 0, 4, 'productId', 'desc');
+      setLatestProducts(res.data.content);
+    } catch (err) {
+      console.error('Error fetching latest products:', err);
+    }
+  };
+
+  fetchLatestProducts();
+}, []);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -145,6 +159,52 @@ useEffect(() => {
     ))}
   </View>
 )}
+{/* Latest Products */}
+{latestProducts.length > 0 && (
+  <View style={{ marginBottom: 20 }}>
+    <Text style={{ fontSize: 18, fontWeight: '600', marginBottom: 10 }}>Sản phẩm mới nhất</Text>
+    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+      {latestProducts.map((item) => (
+        <TouchableOpacity
+          key={item.productId}
+          style={{
+            width: 140,
+            marginRight: 12,
+            borderRadius: 12,
+            backgroundColor: '#fff',
+            padding: 10,
+            elevation: 2,
+            shadowColor: '#000',
+            shadowOpacity: 0.05,
+            shadowRadius: 4,
+          }}
+          onPress={() => navigation.navigate('ProductDetail', { product: item })}
+        >
+          <Image
+            source={{ uri: GET_IMG('products', item.image) }}
+            style={{ width: '100%', height: 120, borderRadius: 8 }}
+          />
+          <Text style={{ marginTop: 8, fontWeight: '500', fontSize: 14 }}>
+            {item.productName}
+          </Text>
+          <Text style={{ fontWeight: 'bold', fontSize: 14, color: '#e11d48' }}>
+            {(item.specialPrice || item.price).toLocaleString('vi-VN')}₫
+          </Text>
+        </TouchableOpacity>
+      ))}
+    </ScrollView>
+  </View>
+  
+)}
+
+{/* Banner quảng cáo cuối trang */}
+<View style={{ marginBottom: 30 }}>
+  <Image
+    source={require('../../../assets/fashion-advertising-web-banner-illustration-vector.jpg')} // thêm file banner trong assets/images
+    style={{ width: '100%', height: 150, borderRadius: 12 }}
+    resizeMode="cover"
+  />
+</View>
 
       </ScrollView>
     </SafeAreaView>

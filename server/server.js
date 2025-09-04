@@ -2,6 +2,7 @@
   const cors = require("cors");
   const app = express();
   const port = 3000;
+    const aiRoutes = require("./routes/ai"); 
 
   const { VNPay, ignoreLogger, ProductCode, VnpLocale, dateFormat } = require("vnpay");
   const axios = require("axios");
@@ -22,6 +23,7 @@
     credentials: true,
   }));
   app.use(express.json());
+  app.use("/api/ai", aiRoutes);
 
   // Lấy totalPrice từ cart API nếu amount không có sẵn
   async function resolveAmount({ amount, email, cartId, token }) {
@@ -116,48 +118,7 @@
     }
   });
 
-  // VNPay callback
-//   app.get("/api/check-payment-vnpay", async (req, res) => {
-//     try {
-//       const { vnp_Amount, vnp_ResponseCode, vnp_TxnRef, vnp_TransactionStatus } = req.query;
-
-//       if (vnp_ResponseCode === "00" && vnp_TransactionStatus === "00") {
-//         const orderInfo = pendingOrders.get(vnp_TxnRef);
-//         if (!orderInfo) return res.redirect("http://localhost:8081/orders?payment=error&reason=no_order_info");
-
-//         const { email, cartId, paymentMethod, token } = orderInfo;
-//         const orderUrl = `${API_URL}/public/users/${encodeURIComponent(email)}/carts/${cartId}/payments/${encodeURIComponent(paymentMethod)}/order`;
-
-//         await axios.post(orderUrl, {}, {
-//           headers: {
-//             "Content-Type": "application/json",
-//             ...(token && { Authorization: `Bearer ${token}` }),
-//           },
-//         });
-
-//         // Xóa giỏ hàng
-//         await axios.delete(`${API_URL}/public/users/${encodeURIComponent(email)}/carts/${cartId}`).catch(console.log);
-
-//         pendingOrders.delete(vnp_TxnRef);
-
-//       // return res.redirect(`http://localhost:8081/orders?payment=success&amount=${Number(vnp_Amount) / 100}`);
-// //       return res.redirect(
-// //   `projectandroidnew://OrderSuccess?payment=success&txnRef=${vnp_TxnRef}&amount=${Number(vnp_Amount) / 100}`
-// // );
-//       return res.redirect(`http://localhost:8081/OrderSuccess`);
-
-//       } else {
-//         // return res.redirect(`http://localhost:8081/orders?payment=failed&reason=${vnp_ResponseCode || "unknown"}`);
-//      return res.redirect(
-//   `projectandroidnew://OrderSuccess?payment=failed&reason=${vnp_ResponseCode || "unknown"}`
-// );
-
-//       }
-//     } catch (error) {
-//       console.error("Error processing payment callback:", error);
-//       return res.redirect("http://localhost:8081/orders?payment=error");
-//     }
-//   });
+  
 app.get("/api/check-payment-vnpay", async (req, res) => {
   try {
     const { vnp_Amount, vnp_ResponseCode, vnp_TxnRef, vnp_TransactionStatus } = req.query;
@@ -260,6 +221,6 @@ app.get("/api/check-payment-vnpay", async (req, res) => {
 
 
   // START SERVER
-  app.listen(port, () => {
-    console.log(`VNPay service listening on port ${port}`);
-  }); 
+ app.listen(port, "0.0.0.0", () => {
+  console.log(`VNPay + AI proxy running at http://0.0.0.0:${port}`);
+});

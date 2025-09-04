@@ -133,15 +133,6 @@ import { SwipeListView } from "react-native-swipe-list-view";
         setConfirmVisible(false);
             navigation.navigate("VNPayWebView", { paymentUrl: url });
 
-        // if (Platform.OS === "web") window.open(url, "_blank");
-        // else await WebBrowser.openBrowserAsync(url);
-
-//         if (Platform.OS === "web") {
-//   window.open(url, "_blank"); // mở sandbox VNPay
-// } else {
-//   navigation.navigate("VNPayWebView", { paymentUrl: url });
-// }
-
       } catch (err: any) {
         Alert.alert("Lỗi", err?.response?.data?.message || "Không thể tạo URL thanh toán");
       } finally {

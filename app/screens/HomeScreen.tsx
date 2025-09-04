@@ -3,8 +3,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React from 'react';
 
 import Cart from './hometabs/Cart';
+import ChatAI from './hometabs/ChatAI';
 import Home from './hometabs/Home';
-import Saved from './hometabs/Saved';
 import Search from './hometabs/Search';
 import AccountStack from './hometabs/tabviews/account/AccountStack';
 
@@ -40,11 +40,11 @@ const HomeScreen = () => {
       />
 
       <Tab.Screen
-        name="Đã lưu"
-        component={Saved}
+        name="ChatAI"
+        component={ChatAI}
         options={{
           tabBarIcon: ({ focused, color, size }) => (
-            <Ionicons name={focused ? 'heart' : 'heart-outline'} size={size} color={color} />
+            <Ionicons name={focused ? 'chatbox' : 'chatbox-outline'} size={size} color={color} />
           ),
         }}
       />
